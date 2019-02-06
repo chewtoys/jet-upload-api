@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as  morgan from "morgan";
+import * as mongoose from 'mongoose'
 
 import { environment } from '../common/environment'
 import { uploadsRauter } from '../router/uploads-router'
@@ -13,13 +14,27 @@ export class Server {
     constructor() {
         this.app = express();
         this.port = environment.server.port
-        uploadsRauter.applyRoutes(this.app)
         this.config();
+
+        uploadsRauter.applyRoutes(this.app)
+       
     }
 
     public initServer(){
-        return this.app.listen(this.port, () =>{
-            console.log('Server is listening on PORT:', this.port)
+        return this.initDb().then(() => {
+            this.app.listen(this.port, () => {
+                console.log('Server is listening on PORT:', this.port)
+            })
+        })
+        .then(() => this)
+        .catch(() => new Error('Start server is failed'))
+   
+    }
+
+    private initDb(){
+        (<any>mongoose).Promisse = global.Promise
+        return mongoose.connect(environment.db.url, {
+            useNewUrlParser: true
         })
     }
 
