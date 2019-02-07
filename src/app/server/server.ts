@@ -4,7 +4,7 @@ import * as  morgan from "morgan";
 import * as mongoose from 'mongoose'
 
 import { environment } from '../common/environment'
-import { uploadsRauter } from '../router/uploads-router'
+import { uploadsRauter } from '../router/upload-router'
 
 export class Server {
     
