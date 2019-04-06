@@ -1,4 +1,5 @@
 import {Request, Response, NextFunction} from 'express'
+
 import * as mongoose from 'mongoose'
 
 export abstract class Controller<E extends mongoose.Document> {

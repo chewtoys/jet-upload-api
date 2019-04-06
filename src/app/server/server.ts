@@ -2,6 +2,8 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as  morgan from "morgan";
 import * as mongoose from 'mongoose'
+import * as dotenv from 'dotenv'
+import * as path from 'path'
 
 import { environment } from '../common/environment'
 import { uploadsRauter } from '../router/upload-router'
@@ -9,7 +11,7 @@ import { uploadsRauter } from '../router/upload-router'
 export class Server {
     
     public app: express.Application
-    private port : any
+    public port : any
 
     constructor() {
         this.app = express();
@@ -17,7 +19,6 @@ export class Server {
         this.config();
 
         uploadsRauter.applyRoutes(this.app)
-       
     }
 
     public initServer(){
@@ -41,10 +42,18 @@ export class Server {
     private config(): void {
         //support application/json
         this.app.use(bodyParser.json());
+
         //support application/x-www-form-urlencoded post data
         this.app.use(bodyParser.urlencoded({ extended: true }));
+
         //logging middleware for node.js http apps.
         //dev - Concise output colored by response status for development use.
         this.app.use(morgan('dev'))
+        
+        //access to static files
+        this.app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')))
+
+        //reading the file .env
+        dotenv.config()
     }
 }
